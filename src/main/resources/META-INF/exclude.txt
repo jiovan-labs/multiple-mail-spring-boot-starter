@@ -1,7 +1,7 @@
 Multiple Mail for Spring Boot Starter
-Copyright (c) 2020 Unikue Ltd. All rights reserved.
-https://unikue.cn
+Copyright (c) 2020 Jiovan Ltd. All rights reserved.
+https://jiovan.com
 
 # spring.autoconfigure.exclude ('+' means better, '-' means must)
-+ org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
-+ org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration
++ org.springframework.boot.mail.autoconfigure.MailSenderAutoConfiguration
++ org.springframework.boot.mail.autoconfigure.MailSenderValidatorAutoConfiguration

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Unikue Ltd. All rights reserved.
+ * Copyright (c) 2020 Jiovan Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.unikue.springstarter.multiplemail.config;
+package com.jiovan.spring.starter.multiplemail.config;
 
 
 import jakarta.activation.MimeType;
@@ -32,10 +32,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProp
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailConfigurationUtils;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.mail.autoconfigure.MailConfigurationUtils;
+import org.springframework.boot.mail.autoconfigure.MailProperties;
+import org.springframework.boot.mail.autoconfigure.MailSenderAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
@@ -44,31 +43,31 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import cn.unikue.commonplexus.springcondition.annotation.ConditionalOnAnyProperties;
-import cn.unikue.commonplexus.springcondition.annotation.ConditionalOnMissingProperty;
+import com.jiovan.plexus.spring.condition.annotation.ConditionalOnAnyProperties;
+import com.jiovan.plexus.spring.condition.annotation.ConditionalOnMissingProperty;
 
 
 /**
- * Secondary configuration for mail sender
+ * Senary configuration for mail sender
  *
  * @author David Hsing
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnBooleanProperty(prefix = "spring.multiple-mail", name = "enabled", matchIfMissing = true)
+@ConditionalOnBooleanProperty(prefix = "jiovan.multiple-mail", name = "enabled", matchIfMissing = true)
 @ConditionalOnAnyProperties(value = {
-    @ConditionalOnProperty(prefix = SecondaryMailSenderConfiguration.PROPERTIES_PREFIX, name = "host"),
-    @ConditionalOnProperty(prefix = SecondaryMailSenderConfiguration.PROPERTIES_PREFIX, name = "jndi-name")
+    @ConditionalOnProperty(prefix = SenaryMailSenderConfiguration.PROPERTIES_PREFIX, name = "host"),
+    @ConditionalOnProperty(prefix = SenaryMailSenderConfiguration.PROPERTIES_PREFIX, name = "jndi-name")
 })
 @ConditionalOnClass(value = {MimeMessage.class, MimeType.class, MailSender.class})
-@AutoConfigureAfter(value = PrimaryMailSenderConfiguration.class)
+@AutoConfigureAfter(value = QuinaryMailSenderConfiguration.class)
 @AutoConfigureBefore(value = MailSenderAutoConfiguration.class)
-@Import(value = {SecondaryMailSenderConfiguration.Entry.class, SecondaryMailSenderConfiguration.Jndi.class, SecondaryMailSenderConfiguration.Classic.class, SecondaryMailSenderConfiguration.Validator.class})
-public class SecondaryMailSenderConfiguration {
-    public static final String PROPERTIES_PREFIX = "spring.multiple-mail.secondary";    // $NON-NLS-1$
-    public static final String MAIL_PROPERTIES = "secondaryMailProperties";    // $NON-NLS-1$
-    public static final String MAIL_SESSION = "secondaryMailSession";    // $NON-NLS-1$
-    public static final String MAIL_SENDER = "secondaryMailSender";    // $NON-NLS-1$
-    public static final String SSL_BUNDLES = "secondaryMailSslBundles";    // $NON-NLS-1$
+@Import(value = {SenaryMailSenderConfiguration.Entry.class, SenaryMailSenderConfiguration.Jndi.class, SenaryMailSenderConfiguration.Classic.class, SenaryMailSenderConfiguration.Validator.class})
+public class SenaryMailSenderConfiguration {
+    public static final String PROPERTIES_PREFIX = "jiovan.multiple-mail.senary";    // $NON-NLS-1$
+    public static final String MAIL_PROPERTIES = "senaryMailProperties";    // $NON-NLS-1$
+    public static final String MAIL_SESSION = "senaryMailSession";    // $NON-NLS-1$
+    public static final String MAIL_SENDER = "senaryMailSender";    // $NON-NLS-1$
+    public static final String SSL_BUNDLES = "senaryMailSslBundles";    // $NON-NLS-1$
 
 
     /**
@@ -78,6 +77,11 @@ public class SecondaryMailSenderConfiguration {
      */
     @Order(value = 0)
     static class Entry {
+        /**
+         * Returns a mail properties bean bound from the {@code PROPERTIES_PREFIX} configuration properties
+         *
+         * @return a mail properties bean bound from the {@code PROPERTIES_PREFIX} configuration properties
+         */
         @Bean(name = MAIL_PROPERTIES)
         @ConditionalOnMissingBean(name = MAIL_PROPERTIES)
         @ConfigurationProperties(prefix = PROPERTIES_PREFIX)
@@ -97,12 +101,29 @@ public class SecondaryMailSenderConfiguration {
     @ConditionalOnBean(name = MAIL_PROPERTIES, value = MailProperties.class)
     @Order(value = 1)
     static class Jndi {
+        /**
+         * Returns a JNDI mail session resolved from the mail properties for the senary mail sender
+         *
+         * @param properties the senary mail properties that hold the JNDI name of the session
+         *
+         * @return a JNDI mail session resolved from the mail properties for the senary mail sender
+         *
+         * @throws IllegalStateException if the JNDI name cannot be resolved to a {@link jakarta.mail.Session}
+         */
         @Bean(name = MAIL_SESSION)
         @ConditionalOnMissingBean(name = MAIL_SESSION)
         public Session mailSession(@Qualifier(value = MAIL_PROPERTIES) @Nonnull MailProperties properties) throws IllegalStateException {
             return MailConfigurationUtils.jndiMailSession(properties);
         }
 
+        /**
+         * Returns a JNDI-backed JavaMail sender for the senary mail sender
+         *
+         * @param properties the senary mail properties used to configure the sender
+         * @param session the senary JNDI mail session through which the sender sends messages
+         *
+         * @return a JNDI-backed JavaMail sender for the senary mail sender
+         */
         @Bean(name = MAIL_SENDER)
         @ConditionalOnBean(name = MAIL_SESSION)
         @ConditionalOnMissingBean(name = MAIL_SENDER)
@@ -121,6 +142,14 @@ public class SecondaryMailSenderConfiguration {
     @ConditionalOnBean(name = MAIL_PROPERTIES, value = MailProperties.class)
     @Order(value = 2)
     static class Classic {
+        /**
+         * Returns a classic JavaMail sender configured from the senary mail properties
+         *
+         * @param properties the senary mail properties that hold the host, port, credentials and protocol settings
+         * @param bundles the senary SSL bundles used to configure SMTP over SSL, may be {@code null}
+         *
+         * @return a classic JavaMail sender configured from the senary mail properties
+         */
         @Bean(name = MAIL_SENDER)
         @ConditionalOnMissingBean(name = MAIL_SENDER)
         @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -145,7 +174,7 @@ public class SecondaryMailSenderConfiguration {
 
         @Override
         public void afterPropertiesSet() throws IllegalStateException {
-            new MailSenderValidatorAutoConfiguration(mailSender);
+            MailConfigurationUtils.validateMailConnection(mailSender);
         }
     }
 }
